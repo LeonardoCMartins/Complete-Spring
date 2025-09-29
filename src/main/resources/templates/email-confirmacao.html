@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial; padding: 20px;">
+<h2>Olá, <span th:text="${nome}">Usuário</span>!</h2>
+<p>Clique no botão abaixo para confirmar seu e-mail:</p>
+
+<a th:href="${link}" style="padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px;">
+    Confirmar E-mail
+</a>
+
+<p style="margin-top: 20px;">Se você não solicitou isso, ignore este e-mail.</p>
+</body>
+</html>
