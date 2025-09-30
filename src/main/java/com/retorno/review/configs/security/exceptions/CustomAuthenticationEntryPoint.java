@@ -1,4 +1,4 @@
-package com.retorno.review.configs.security;
+package com.retorno.review.configs.security.exceptions;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

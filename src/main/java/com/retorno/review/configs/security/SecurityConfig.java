@@ -1,13 +1,20 @@
 package com.retorno.review.configs.security;
 
+import com.retorno.review.configs.security.exceptions.CustomAccessDeniedHandler;
+import com.retorno.review.configs.security.exceptions.CustomAuthenticationEntryPoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -15,28 +22,34 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAccessDeniedHandler accessDeniedHandler, CustomAuthenticationEntryPoint authEntryPoint) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   CustomAccessDeniedHandler accessDeniedHandler,
+                                                   CustomAuthenticationEntryPoint authEntryPoint) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll() // cadastro público
-                        .requestMatchers("/users/test", "/users/list").hasRole("ADMIN") // só admin
-                        .anyRequest().authenticated() // resto precisa de login
+                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()           // criar usuário BASIC
+                        .requestMatchers(HttpMethod.POST, "/usuarios/admin").permitAll()     // criar usuário ADMIN
+                        .requestMatchers(HttpMethod.GET, "/usuarios/public").permitAll()     // GET público
+                        .requestMatchers("/usuarios/test", "/usuarios/list").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
-                        .accessDeniedHandler(accessDeniedHandler)       // usuário sem role
-                        .authenticationEntryPoint(authEntryPoint)      // usuário não logado
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authEntryPoint)
                 )
-                .logout(Customizer.withDefaults()) // logout padrão
-                .csrf(csrf -> csrf.disable()) // opcional, se API
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                );
-
+                .httpBasic(Customizer.withDefaults())
+                .logout(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable());
         return http.build();
     }
-
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
