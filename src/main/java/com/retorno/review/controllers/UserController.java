@@ -20,12 +20,12 @@ import java.util.Set;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private UserRepository userRepository;
+//    @Autowired
+//    private RoleRepository roleRepository;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
 
 //    @Transactional
