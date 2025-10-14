@@ -23,6 +23,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -51,11 +52,24 @@ public class SecurityConfig {
     private Resource privateKeyResource;
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/actuator/**");
+    }
+
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST,"/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/actuator/*").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/actuator/prometheus").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/hello/oi").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/hello/account").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/hello/greet").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/hello/farewell").permitAll()
                         .requestMatchers(HttpMethod.GET, "/admin/public").permitAll()
                         .requestMatchers(HttpMethod.GET, "/admin/secret").hasAuthority("SCOPE_ROLE_ADMIN")
                         .anyRequest().authenticated())

@@ -6,11 +6,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /*
 API Simples
 
- Autenticação e Autorização - JWT e Spring Security (keyclock, oauth2.0)
+ Autenticação e Autorização - JWT e Spring Security (keyclock, oauth2.0) ✔
 
  Validação de Dados - @Valid, @NotNull, @Email, @Password ✔
  Relacionamentos entre entidades - @OneToMany, @ManyToOne, @ManyToMany ✔
@@ -46,8 +48,17 @@ API Simples
 @EnableFeignClients
 @EnableCaching
 @OpenAPIDefinition(info = @Info(title = "API DE REVISÃO", version = "10.0", description = "API para estudar conceitos do Spring"))
-public class ReviewApplication {
+public class  ReviewApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ReviewApplication.class, args);
 	}
 }
+
+@RestController
+class HomeController {
+	@GetMapping("/")
+	public String home() {
+		return "Login bem-sucedido com o Google!";
+	}
+}
+
