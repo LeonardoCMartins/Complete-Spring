@@ -1,4 +1,4 @@
-package com.retorno.review.configs.microservices;
+package com.retorno.review.configs.rabbitmq;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
